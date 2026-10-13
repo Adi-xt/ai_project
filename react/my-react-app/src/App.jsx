@@ -1,95 +1,70 @@
-import { GoogleLogin } from "@react-oauth/google";
+import { useState } from "react";
+
+import Login from "./Login";
+import Signup from "./Signup";
+import GoogleLoginButton from "./GoogleLoginButton";
+
 import "./App.css";
+
 
 function App() {
 
-  const handleGoogleLogin = async (credentialResponse) => {
-
-    try {
-
-      console.log("Google Response:");
-      console.log(credentialResponse);
-
-      const credential = credentialResponse.credential;
-
-      console.log("Google Credential:");
-      console.log(credential);
-
-   
-      const response = await fetch(
-        "http://localhost:4000/api/auth/google",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json",
-          },
-
-          body: JSON.stringify({
-            credential: credential,
-          }),
-        }
-      );
-
-      axios.post('http://localhost:4000/login',credential)
-
-      const data = await response.json();
-
-      console.log("Backend Response:");
-      console.log(data);
-
-      if (!response.ok) {
-        throw new Error(data.message);
-      }
-
-
-      localStorage.setItem("token", data.token);
-
-
-      localStorage.setItem(
-        "user",
-        JSON.stringify(data.user)
-      );
-
-      alert(`Welcome ${data.user.name}`);
-
-    } catch (error) {
-
-      console.log("Login Error:", error);
-
-      alert("Google Login Failed");
-
-    }
-  };
-
-
-  const handleGoogleError = () => {
-
-    console.log("Google Login Failed");
-
-    alert("Google Login Failed");
-
-  };
-
+  const [isSignup, setIsSignup] = useState(false);
 
   return (
 
     <div className="container">
 
-      <div className="login-card">
+      {isSignup ? (
 
-        <h1>Welcome Back 👋</h1>
+        <>
+          <Signup />
 
-        <p>
-          Login with your Google account
-        </p>
+          <div className="switch">
 
-        <GoogleLogin
-          onSuccess={handleGoogleLogin}
-          onError={handleGoogleError}
-        />
+            <p>
+              Already have an account?
+            </p>
 
-      </div>
+            <button
+              onClick={() => setIsSignup(false)}
+            >
+              Login
+            </button>
+
+          </div>
+        </>
+
+      ) : (
+
+        <>
+          <Login />
+
+          <div className="google-section">
+
+            <p>OR</p>
+
+            <GoogleLoginButton />
+
+          </div>
+
+          <div className="switch">
+
+            <p>
+              Don't have an account?
+            </p>
+
+            <button
+              onClick={() => setIsSignup(true)}
+            >
+              Signup
+            </button>
+
+          </div>
+
+        </>
+
+      )}
 
     </div>
 

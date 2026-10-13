@@ -19,9 +19,17 @@ const userSchema = new mongoose.Schema(
       unique: true,
     },
 
-  
-  } 
- 
+    password: {
+      type: String,
+    },
+
+    profilePicture: {
+      type: String,
+    },
+  },
+  {
+    timestamps: true,
+  }
 );
 
 module.exports = mongoose.model("User", userSchema);
