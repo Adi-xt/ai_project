@@ -10,11 +10,11 @@ const interviewRoutes = require("./routes/interview");
 
 const app = express();
 
-// Middleware
+
 app.use(cors());
 app.use(express.json());
 
-// Google Login
+
 app.use("/api/auth", authRoutes);
 
 // Manual Login

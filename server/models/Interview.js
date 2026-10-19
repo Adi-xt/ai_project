@@ -33,12 +33,12 @@ const interviewSchema = new mongoose.Schema(
     //   required: true,
     },
 
-    questions: [
-      {
-        question: String,
-        type: String,
-      },
-    ],
+    // questions: [
+    //   {
+    //     question: String,
+    //     type: String,
+    //   },
+    // ],
   },
   {
     timestamps: true,
