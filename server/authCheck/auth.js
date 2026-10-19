@@ -1,17 +1,35 @@
-let auth=(req,res,next)=>{
-    let token=req.headers.authorization;
-    console.log(token,"toeknn");
-    
-    if(!token){
-       return res.send("kaun hai app...")
+
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
+
+const auth = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!token) {
+      return res.status(401).json({
+        msg: "Token missing. Please login first.",
+      });
     }
-   let decode=  jwt.verify(token,"hehehehehe")
-   console.log(decode,"isse");
-   req.user=decode
- 
-   next()
- }
 
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
- module.exports=auth
- 
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return res.status(401).json({
+        msg: "User not found",
+      });
+    }
+
+    req.user = user;
+
+    next();
+  } catch (err) {
+    return res.status(401).json({
+      msg: "Invalid or expired token",
+    });
+  }
+};
+
+module.exports = auth;

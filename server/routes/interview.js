@@ -1,24 +1,60 @@
-let express= require('express')
- let router=   express.Router()
-  let Interview=    require('../models/Interview')
-   let auth=  require('../authCheck/auth')
 
- router.post('/interview',auth,async(req,res)=>{
-   let {experience,role,interviewType,numberOfQuestions, questions}= req.body
-   try{
-    if(!experience || !role || !interviewType ||!numberOfQuestions||!questions){
-        return res.status(400).json({msg:"achhe se fill kroo...."})
+const express = require("express");
+const router = express.Router();
+
+const Interview = require("../models/Interview");
+const auth = require("../authCheck/auth");
+
+// Create Interview
+router.post("/interview", auth, async (req, res) => {
+  try {
+    const {
+      experience,
+      role,
+      difficulty,
+      interviewType,
+      numberOfQuestions,
+      questions,
+    } = req.body;
+
+    // Validation
+    if (
+      !experience ||
+      !role ||
+      !difficulty ||
+      !interviewType ||
+      !numberOfQuestions ||
+      !Array.isArray(questions) ||
+      questions.length === 0
+    ) {
+      return res.status(400).json({
+        msg: "Please fill all fields properly",
+      });
     }
-     
-     await  Interview.create({
-        userId:req.user._id,
-        experience,role,numberOfQuestions,questions
 
-    })
-    return res.send("done")
+    // Save interview in MongoDB
+    const interview = await Interview.create({
+      userId: req.user._id,
+      experience,
+      role,
+      difficulty,
+      interviewType,
+      numberOfQuestions,
+      questions,
+    });
 
-   }catch(err){
+    return res.status(201).json({
+      msg: "Interview created successfully",
+      interview,
+    });
+  } catch (err) {
+    console.error("Interview Error:", err);
 
-   }
+    return res.status(500).json({
+      msg: "Something went wrong",
+      error: err.message,
+    });
+  }
+});
 
- })
+module.exports = router;
